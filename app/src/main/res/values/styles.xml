@@ -1,11 +1,23 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:textColor">@color/colorTextPrimary</item>
+        <item name="android:button">@style/ActionButton</item>
+    </style>
+
+    <style name="Button" parent="@android:style/Widget.Material.Light.Button">
+        <item name="android:paddingHorizontal">15dp</item>
+    </style>
+
+    <style name="ActionButton" parent="Button">
+        <item name="android:colorButtonNormal">@color/action_button_color_selector</item>
+        <item name="android:colorControlHighlight">@color/colorAccent</item>
+        <item name="android:textColor">@color/colorPrimaryLight</item>
     </style>
 
 </resources>
