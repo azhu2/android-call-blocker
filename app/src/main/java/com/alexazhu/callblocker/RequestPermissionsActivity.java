@@ -15,7 +15,7 @@ import java.util.Set;
 public class RequestPermissionsActivity extends AppCompatActivity {
     private static final String LOG_TAG = RequestPermissionsActivity.class.getSimpleName();
 
-    private static final String[] REQUIRED_PERMISSIONS = {Manifest.permission.READ_PHONE_STATE, Manifest.permission.CALL_PHONE};
+    private static final String[] REQUIRED_PERMISSIONS = {Manifest.permission.READ_PHONE_STATE, Manifest.permission.READ_CALL_LOG, Manifest.permission.CALL_PHONE};
     private static final int PERMISSIONS_REQUEST_CODE = 1;
 
     private Button permissionsButton;
@@ -77,7 +77,7 @@ public class RequestPermissionsActivity extends AppCompatActivity {
 
     private void resetOnMissingPermissions(final String errorMsg) {
         Log.e(LOG_TAG, errorMsg);
-        Toast.makeText(this, errorMsg, Toast.LENGTH_LONG);
+        Toast.makeText(this, errorMsg, Toast.LENGTH_LONG).show();
         permissionsButton.setEnabled(true);
     }
 
