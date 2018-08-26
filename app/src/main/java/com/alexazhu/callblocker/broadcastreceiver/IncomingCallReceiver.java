@@ -1,4 +1,4 @@
-package com.alexazhu.callblocker;
+package com.alexazhu.callblocker.broadcastreceiver;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;

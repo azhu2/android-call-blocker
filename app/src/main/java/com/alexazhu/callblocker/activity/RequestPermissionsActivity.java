@@ -1,24 +1,27 @@
-package com.alexazhu.callblocker;
+package com.alexazhu.callblocker.activity;
 
-import android.Manifest;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.Toast;
 
-import java.util.HashSet;
-import java.util.Set;
+import com.alexazhu.callblocker.R;
+import com.alexazhu.callblocker.util.PermissionsUtil;
 
 public class RequestPermissionsActivity extends AppCompatActivity {
     private static final String LOG_TAG = RequestPermissionsActivity.class.getSimpleName();
 
-    private static final String[] REQUIRED_PERMISSIONS = {Manifest.permission.READ_PHONE_STATE, Manifest.permission.READ_CALL_LOG, Manifest.permission.CALL_PHONE};
     private static final int PERMISSIONS_REQUEST_CODE = 1;
 
+    private final PermissionsUtil permissionsUtil;
     private Button permissionsButton;
+
+    public RequestPermissionsActivity() {
+        this.permissionsUtil = new PermissionsUtil(this);
+    }
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -33,51 +36,38 @@ public class RequestPermissionsActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
 
-        final boolean permissionsGranted = checkPermissions();
+        final boolean permissionsGranted = permissionsUtil.checkPermissions();
         if (!permissionsGranted) {
             permissionsButton.setEnabled(true);
         }
     }
 
-    private boolean checkPermissions() {
-        Log.d(LOG_TAG, "Checking permissions");
-
-        final Set<String> missingPermissions = new HashSet<>();
-        for (final String permission : REQUIRED_PERMISSIONS) {
-            if (checkSelfPermission(permission) != PackageManager.PERMISSION_GRANTED) {
-                missingPermissions.add(permission);
-            }
-        }
-
-        return missingPermissions.isEmpty();
-    }
-
     @Override
-    public void onRequestPermissionsResult(final int requestCode, final String permissions[], final int[] grantResults) {
+    public void onRequestPermissionsResult(final int requestCode, @NonNull final String permissions[], @NonNull final int[] grantResults) {
         if (requestCode !=  PERMISSIONS_REQUEST_CODE) {
             return;
         }
 
         if (grantResults.length != permissions.length) {
-            final String errorMsg = "Permissions not granted; exiting app";
+            final String errorMsg = "Permissions not granted";
             resetOnMissingPermissions(errorMsg);
             return;
         }
 
         for (int i = 0; i < permissions.length; i++) {
             if (grantResults[i] != PackageManager.PERMISSION_GRANTED) {
-                final String errorMsg = String.format("Permission %s not granted; exiting app", permissions[i]);
+                final String errorMsg = String.format("Permission %s not granted", permissions[i]);
                 resetOnMissingPermissions(errorMsg);
                 return;
             }
         }
 
         Log.d(LOG_TAG, "Permissions granted");
+        finish();       // Return to ConfigurationActivity
     }
 
     private void resetOnMissingPermissions(final String errorMsg) {
         Log.e(LOG_TAG, errorMsg);
-        Toast.makeText(this, errorMsg, Toast.LENGTH_LONG).show();
         permissionsButton.setEnabled(true);
     }
 
@@ -85,7 +75,7 @@ public class RequestPermissionsActivity extends AppCompatActivity {
         @Override
         public void onClick(final View v) {
             permissionsButton.setEnabled(false);
-            requestPermissions(REQUIRED_PERMISSIONS, PERMISSIONS_REQUEST_CODE);
+            requestPermissions(PermissionsUtil.REQUIRED_PERMISSIONS, PERMISSIONS_REQUEST_CODE);
         }
     }
 }

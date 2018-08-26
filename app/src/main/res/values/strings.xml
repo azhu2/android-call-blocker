@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">CallBlocker</string>
+    <string name="title_activity_configuration">ConfigurationActivity</string>
+    <string name="title_activity_main">MainActivity</string>
 </resources>
