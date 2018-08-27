@@ -6,10 +6,20 @@
     android:layout_height="match_parent"
     tools:context="activity.ConfigurationActivity">
 
+    <TextView
+        android:id="@+id/blocked_numbers_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Blocked Numbers"
+        android:gravity="center"
+        android:textSize="40sp"
+        android:textStyle="bold" />
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/blocked_number_list"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/blocked_numbers_title"/>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"

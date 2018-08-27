@@ -2,16 +2,15 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
     android:padding="10dp">
 
     <TextView
         android:id="@+id/match_type"
         android:layout_width="80dp"
         android:layout_height="wrap_content"
-        android:textSize="10sp"
+        android:textAllCaps="true"
         android:textColor="@color/colorTextSecondary"
-        android:textAllCaps="true"/>
+        android:textSize="10sp" />
 
     <TextView
         android:id="@+id/phone_number"

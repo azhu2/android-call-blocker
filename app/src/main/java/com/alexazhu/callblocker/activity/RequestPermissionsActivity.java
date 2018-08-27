@@ -16,12 +16,8 @@ public class RequestPermissionsActivity extends AppCompatActivity {
 
     private static final int PERMISSIONS_REQUEST_CODE = 1;
 
-    private final PermissionsUtil permissionsUtil;
+    private PermissionsUtil permissionsUtil;
     private Button permissionsButton;
-
-    public RequestPermissionsActivity() {
-        this.permissionsUtil = new PermissionsUtil(this);
-    }
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -30,6 +26,8 @@ public class RequestPermissionsActivity extends AppCompatActivity {
 
         permissionsButton = findViewById(R.id.permissions_button);
         permissionsButton.setOnClickListener(new PermissionsButtonListener());
+
+        this.permissionsUtil = new PermissionsUtil(this);
     }
 
     @Override

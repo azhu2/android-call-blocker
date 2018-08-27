@@ -7,7 +7,7 @@
     tools:context="activity.RequestPermissionsActivity">
 
     <TextView
-        android:id="@+id/title"
+        android:id="@+id/permissions_title"
         android:text="Permissions"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -23,7 +23,7 @@
         android:gravity="center"
         android:text="Please grant permissions to make and manage phone calls"
         android:textSize="15sp"
-        app:layout_constraintTop_toBottomOf="@+id/title" />
+        app:layout_constraintTop_toBottomOf="@+id/permissions_title" />
 
     <Button
         android:id="@+id/permissions_button"
