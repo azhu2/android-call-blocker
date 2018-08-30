@@ -22,11 +22,61 @@
         app:layout_constraintTop_toBottomOf="@+id/blocked_numbers_title"/>
 
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab"
+        android:id="@+id/main_fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@android:drawable/ic_input_add"
+        app:fabSize="normal"
+        app:backgroundTint="@color/colorAccent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_margin="16dp" />
+        android:layout_margin="@dimen/fab_margin" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/exact_fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@android:drawable/ic_input_add"
+        app:fabSize="mini"
+        app:backgroundTint="@color/colorPrimaryLight"
+        app:layout_constraintBottom_toTopOf="@id/main_fab"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginBottom="@dimen/fab_margin"
+        android:layout_marginEnd="@dimen/mini_fab_horizontal_margin"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/exact_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Add exact number"
+        app:layout_constraintEnd_toStartOf="@id/exact_fab"
+        app:layout_constraintBottom_toBottomOf="@id/exact_fab"
+        android:layout_margin="@dimen/fab_label_margin"
+        android:visibility="gone"
+        android:clickable="false" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/regex_fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@android:drawable/ic_input_add"
+        app:fabSize="mini"
+        app:backgroundTint="@color/colorPrimaryLight"
+        app:layout_constraintBottom_toTopOf="@id/exact_fab"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginBottom="@dimen/fab_margin"
+        android:layout_marginEnd="@dimen/mini_fab_horizontal_margin"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/regex_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Add prefix"
+        app:layout_constraintEnd_toStartOf="@id/regex_fab"
+        app:layout_constraintBottom_toBottomOf="@id/regex_fab"
+        android:layout_margin="@dimen/fab_label_margin"
+        android:visibility="gone"
+        android:clickable="false" />
 </android.support.constraint.ConstraintLayout>

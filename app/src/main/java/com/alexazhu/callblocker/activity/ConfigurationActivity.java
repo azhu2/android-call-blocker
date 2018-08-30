@@ -8,6 +8,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.alexazhu.callblocker.R;
@@ -30,6 +32,9 @@ public class ConfigurationActivity extends AppCompatActivity {
     private PermissionsUtil permissionsUtil;
     private BlockedNumberDao blockedNumberDao;
 
+    private boolean actionButtonsVisible = false;
+    private BlockedNumberListAdapter listAdapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,10 +43,7 @@ public class ConfigurationActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_configuration);
 
-        FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener((view) ->
-            addNumber(new BlockedNumber(BlockedNumberType.EXACT_MATCH, "6505551212"))
-        );
+        setupButtons();
     }
 
     @Override
@@ -69,30 +71,73 @@ public class ConfigurationActivity extends AppCompatActivity {
     private void populateBlockedNumbers() {
         runOnUiThread(() -> {
             RecyclerView listView = findViewById(R.id.blocked_number_list);
-            BlockedNumberListAdapter adapter = new BlockedNumberListAdapter(blockedNumbers);
-            listView.setAdapter(adapter);
+            listAdapter = new BlockedNumberListAdapter(blockedNumbers);
+            listView.setAdapter(listAdapter);
             listView.setLayoutManager(new LinearLayoutManager(context));
             listView.addItemDecoration(new DividerItemDecoration(listView.getContext(), DividerItemDecoration.VERTICAL));
         });
     }
 
     private void addNumber(final BlockedNumber number) {
-        if (!blockedNumbers.contains(number)) {
-            blockedNumbers.add(number);
-            AsyncExecutorUtil.getInstance().getExecutor().execute(() -> {
+        AsyncExecutorUtil.getInstance().getExecutor().execute(() -> {
+            if (!blockedNumbers.contains(number)) {
                 blockedNumberDao.insert(number);
-            });
-        } else {
-            Toast.makeText(context, "Number already added to list", Toast.LENGTH_SHORT).show();
-        }
+                blockedNumbers.add(number);
+                listAdapter.notifyDataSetChanged();
+            } else {
+                this.runOnUiThread(() -> Toast.makeText(context, "Number already added to list", Toast.LENGTH_SHORT).show());
+            }
+        });
     }
 
     private void removeNumber(final BlockedNumber number) {
-        if (blockedNumbers.contains(number)) {
-            blockedNumbers.remove(number);
-            AsyncExecutorUtil.getInstance().getExecutor().execute(() -> {
+        AsyncExecutorUtil.getInstance().getExecutor().execute(() -> {
+            if (blockedNumbers.contains(number)) {
+                blockedNumbers.remove(number);
+                listAdapter.notifyDataSetChanged();
                 blockedNumberDao.delete(number);
-            });
-        }
+                this.runOnUiThread(() -> Toast.makeText(context, "Number deleted", Toast.LENGTH_SHORT).show());
+            }
+        });
+    }
+
+    private void setupButtons() {
+        FloatingActionButton mainFab = findViewById(R.id.main_fab);
+
+        FloatingActionButton exactFab = findViewById(R.id.exact_fab);
+        TextView exactLabel = findViewById(R.id.exact_label);
+        FloatingActionButton regexFab = findViewById(R.id.regex_fab);
+        TextView regexLabel = findViewById(R.id.regex_label);
+
+        // Toggle action button visibility from main button
+        mainFab.setOnClickListener((view) -> {
+            actionButtonsVisible = !actionButtonsVisible;
+
+            // Ugly if-then because FloatingActionButton.setVisibility() can't be called here
+            if (actionButtonsVisible) {
+                exactFab.show();
+                exactLabel.setVisibility(View.VISIBLE);
+                regexFab.show();
+                regexLabel.setVisibility(View.VISIBLE);
+            } else {
+                exactFab.hide();
+                exactLabel.setVisibility(View.GONE);
+                regexFab.hide();
+                regexLabel.setVisibility(View.GONE);
+            }
+        });
+
+        // TODO Add real functionality
+        View.OnClickListener openExactDialog = (view) -> {
+            addNumber(new BlockedNumber(BlockedNumberType.EXACT_MATCH, "6505551212"));
+        };
+        exactFab.setOnClickListener(openExactDialog);
+        exactLabel.setOnClickListener(openExactDialog);
+
+        View.OnClickListener openRegexDialog = (view) -> {
+            addNumber(new BlockedNumber(BlockedNumberType.REGEX_MATCH, "240426"));
+        };
+        regexFab.setOnClickListener(openRegexDialog);
+        regexLabel.setOnClickListener(openRegexDialog);
     }
 }
