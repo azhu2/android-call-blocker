@@ -17,19 +17,14 @@ import com.alexazhu.callblocker.blockednumber.BlockedNumber;
 import com.alexazhu.callblocker.blockednumber.BlockedNumberDao;
 import com.alexazhu.callblocker.blockednumber.BlockedNumberDatabase;
 import com.alexazhu.callblocker.blockednumber.BlockedNumberType;
+import com.alexazhu.callblocker.layout.BlockedNumberListAdapter;
 import com.alexazhu.callblocker.util.AsyncExecutorUtil;
 import com.alexazhu.callblocker.util.PermissionsUtil;
-import com.alexazhu.callblocker.view.BlockedNumberListAdapter;
 
 import java.util.List;
 
 public class ConfigurationActivity extends AppCompatActivity {
-    private static final String LOG_TAG = ConfigurationActivity.class.getSimpleName();
-
-    private List<BlockedNumber> blockedNumbers;
-
     private Context context;
-    private PermissionsUtil permissionsUtil;
     private BlockedNumberDao blockedNumberDao;
 
     private boolean actionButtonsVisible = false;
@@ -50,7 +45,7 @@ public class ConfigurationActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
 
-        permissionsUtil = new PermissionsUtil(this);
+        PermissionsUtil permissionsUtil = new PermissionsUtil(this);
         blockedNumberDao = BlockedNumberDatabase.getInstance(this).blockedNumberDao();
 
         fetchAndPopulateBlockedNumbers();
@@ -61,44 +56,35 @@ public class ConfigurationActivity extends AppCompatActivity {
     }
 
     private void fetchAndPopulateBlockedNumbers() {
-        AsyncExecutorUtil.getInstance().getExecutor().execute(() -> {
-            blockedNumbers = blockedNumberDao.getAll();
-
-            populateBlockedNumbers();
-        });
-    }
-
-    private void populateBlockedNumbers() {
         runOnUiThread(() -> {
             RecyclerView listView = findViewById(R.id.blocked_number_list);
-            listAdapter = new BlockedNumberListAdapter(blockedNumbers);
+            listAdapter = new BlockedNumberListAdapter(this);
             listView.setAdapter(listAdapter);
             listView.setLayoutManager(new LinearLayoutManager(context));
             listView.addItemDecoration(new DividerItemDecoration(listView.getContext(), DividerItemDecoration.VERTICAL));
+
+            AsyncExecutorUtil.getInstance().getExecutor().execute(() -> {
+                List<BlockedNumber> blockedNumberList = blockedNumberDao.getAll();
+                listAdapter.addAll(blockedNumberList);
+            });
         });
     }
 
-    private void addNumber(final BlockedNumber number) {
-        AsyncExecutorUtil.getInstance().getExecutor().execute(() -> {
-            if (!blockedNumbers.contains(number)) {
-                blockedNumberDao.insert(number);
-                blockedNumbers.add(number);
-                listAdapter.notifyDataSetChanged();
-            } else {
-                this.runOnUiThread(() -> Toast.makeText(context, "Number already added to list", Toast.LENGTH_SHORT).show());
-            }
-        });
+    public void addNumber(final BlockedNumber number) {
+        if (!listAdapter.contains(number)) {
+            listAdapter.add(number);
+            AsyncExecutorUtil.getInstance().getExecutor().execute(() -> blockedNumberDao.insert(number));
+        } else {
+            Toast.makeText(context, "Number already added to list", Toast.LENGTH_SHORT).show();
+        }
     }
 
-    private void removeNumber(final BlockedNumber number) {
-        AsyncExecutorUtil.getInstance().getExecutor().execute(() -> {
-            if (blockedNumbers.contains(number)) {
-                blockedNumbers.remove(number);
-                listAdapter.notifyDataSetChanged();
-                blockedNumberDao.delete(number);
-                this.runOnUiThread(() -> Toast.makeText(context, "Number deleted", Toast.LENGTH_SHORT).show());
-            }
-        });
+    public void removeNumber(final BlockedNumber number) {
+        if (listAdapter.contains(number)) {
+            listAdapter.remove(number);
+            AsyncExecutorUtil.getInstance().getExecutor().execute(() -> blockedNumberDao.delete(number));
+            Toast.makeText(context, "Number deleted", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void setupButtons() {

@@ -11,7 +11,7 @@ import android.content.Context;
 public abstract class BlockedNumberDatabase extends RoomDatabase {
     private static final String DB_NAME = "blockednumbers.db";
 
-    public static volatile BlockedNumberDatabase INSTANCE;
+    private static volatile BlockedNumberDatabase INSTANCE;
 
     public abstract BlockedNumberDao blockedNumberDao();
 

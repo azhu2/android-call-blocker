@@ -16,24 +16,27 @@ public class BlockedNumber {
     @NonNull
     private final Pattern regex;
 
-    public BlockedNumber(final BlockedNumberType type, final String regex) {
+    public BlockedNumber(@NonNull final BlockedNumberType type, @NonNull final String regex) {
         this.type = type;
         this.regex = Pattern.compile(regex);
     }
 
-    public BlockedNumber(final BlockedNumberType type, final Pattern regex) {
+    public BlockedNumber(@NonNull final BlockedNumberType type, @NonNull final Pattern regex) {
         this.type = type;
         this.regex = regex;
     }
 
+    @NonNull
     public BlockedNumberType getType() {
         return type;
     }
 
+    @NonNull
     public Pattern getRegex() {
         return regex;
     }
 
+    @NonNull
     public String getPattern() {
         return regex.pattern();
         // TODO Strip \d*$ from end of regex
