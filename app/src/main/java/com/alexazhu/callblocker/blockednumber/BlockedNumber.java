@@ -53,6 +53,11 @@ public class BlockedNumber {
         return this.type == otherObj.type && this.regex.pattern().equals(otherObj.regex.pattern());
     }
 
+    @Override
+    public String toString() {
+        return String.format("%s|%s", type, regex);
+    }
+
     @TypeConverter
     public static String typeToString(final BlockedNumberType type) {
         return type.name();
