@@ -33,7 +33,6 @@ public class BlockedNumber {
 
     public String getPattern() {
         return regex.pattern();
-        // TODO Strip \d*$ from end of regex
     }
 
     public String toFormattedString() {
