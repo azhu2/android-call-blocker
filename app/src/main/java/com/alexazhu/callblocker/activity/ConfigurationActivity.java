@@ -3,6 +3,7 @@ package com.alexazhu.callblocker.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
@@ -70,6 +71,15 @@ public class ConfigurationActivity extends AppCompatActivity {
         listView.setAdapter(listAdapter);
         listView.setLayoutManager(new LinearLayoutManager(context));
         listView.addItemDecoration(new DividerItemDecoration(listView.getContext(), DividerItemDecoration.VERTICAL));
+        listView.addOnItemTouchListener(new RecyclerView.SimpleOnItemTouchListener() {
+            @Override
+            public boolean onInterceptTouchEvent(@NonNull RecyclerView recyclerView, @NonNull MotionEvent motionEvent) {
+                if (actionButtonsVisible) {
+                    hideActionButtons();
+                }
+                return false;
+            }
+        });
 
         AsyncExecutorUtil.getInstance().getExecutor().execute(() -> {
             List<BlockedNumber> blockedNumberList = blockedNumberDao.getAll();
@@ -146,7 +156,7 @@ public class ConfigurationActivity extends AppCompatActivity {
         regexLabel.setVisibility(View.VISIBLE);
     }
 
-    private void hideActionButtons() {
+    public void hideActionButtons() {
         actionButtonsVisible = false;
         exactFab.hide();
         exactLabel.setVisibility(View.GONE);

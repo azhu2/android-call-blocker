@@ -1,14 +1,20 @@
 package com.alexazhu.callblocker.layout;
 
+import android.animation.Animator;
+import android.animation.AnimatorInflater;
 import android.content.Context;
+import android.gesture.Gesture;
 import android.support.annotation.NonNull;
 import android.support.v7.util.SortedList;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.util.SortedListAdapterCallback;
 import android.util.Log;
+import android.view.GestureDetector;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.alexazhu.callblocker.R;
@@ -24,12 +30,16 @@ public class BlockedNumberListAdapter extends RecyclerView.Adapter<BlockedNumber
     public static class BlockedNumberViewHolder extends RecyclerView.ViewHolder {
         private final TextView matchTypeView;
         private final TextView phoneNumberView;
+        private final ImageView deleteButtonView;
+
+        private boolean isExpanded = false;
 
         private BlockedNumberViewHolder(@NonNull final View itemView) {
             super(itemView);
 
             matchTypeView = itemView.findViewById(R.id.match_type);
             phoneNumberView = itemView.findViewById(R.id.phone_number);
+            deleteButtonView = itemView.findViewById(R.id.delete_button);
         }
     }
 
@@ -83,7 +93,29 @@ public class BlockedNumberListAdapter extends RecyclerView.Adapter<BlockedNumber
         final BlockedNumber number = blockedNumbers.get(index);
         viewHolder.matchTypeView.setText(number.getType().getDisplayText());
         viewHolder.phoneNumberView.setText(number.getPattern());
-        viewHolder.phoneNumberView.setOnClickListener((view) -> parentActivity.removeNumber(number));
+        viewHolder.deleteButtonView.setOnClickListener((view) -> parentActivity.removeNumber(number));
+    }
+
+    @Override
+    public void onViewAttachedToWindow(@NonNull final BlockedNumberViewHolder viewHolder) {
+        viewHolder.itemView.setOnClickListener((view) -> {
+            Animator animator = AnimatorInflater.loadAnimator(parentActivity, viewHolder.isExpanded ? R.animator.collapse_list_item : R.animator.expand_list_item);
+            animator.setTarget(viewHolder.itemView.findViewById(R.id.list_item));
+            animator.start();
+            viewHolder.isExpanded = !viewHolder.isExpanded;
+
+            parentActivity.getWindow().getDecorView().performClick();
+        });
+    }
+
+    @Override
+    public void onViewDetachedFromWindow(@NonNull final BlockedNumberViewHolder viewHolder) {
+        if (viewHolder.isExpanded) {
+            Animator animator = AnimatorInflater.loadAnimator(parentActivity, R.animator.collapse_list_item);
+            animator.setTarget(viewHolder.itemView.findViewById(R.id.list_item));
+            animator.start();
+            viewHolder.isExpanded = !viewHolder.isExpanded;
+        }
     }
 
     @Override
