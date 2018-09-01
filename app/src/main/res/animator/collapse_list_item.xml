@@ -4,7 +4,7 @@
         android:id="@+id/expand_list_item"
         android:interpolator="@android:anim/accelerate_decelerate_interpolator"
         android:propertyName="x"
-        android:valueFrom="@dimen/icon_size_negative"
+        android:valueFrom="@dimen/icon_offset"
         android:valueTo="0"
         android:duration="500" />
 </set>

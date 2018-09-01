@@ -5,6 +5,6 @@
         android:interpolator="@android:anim/accelerate_decelerate_interpolator"
         android:propertyName="x"
         android:valueFrom="0"
-        android:valueTo="@dimen/icon_size_negative"
+        android:valueTo="@dimen/icon_offset"
         android:duration="500" />
 </set>

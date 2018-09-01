@@ -3,5 +3,5 @@
     <dimen name="mini_fab_horizontal_margin">24dp</dimen>
     <dimen name="fab_label_margin">12dp</dimen>
     <dimen name="icon_size">48dp</dimen>
-    <dimen name="icon_size_negative">-48dp</dimen>
+    <dimen name="icon_offset">-48dp</dimen>
 </resources>
