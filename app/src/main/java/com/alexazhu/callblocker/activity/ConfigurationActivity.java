@@ -72,12 +72,13 @@ public class ConfigurationActivity extends AppCompatActivity {
         listView.setLayoutManager(new LinearLayoutManager(context));
         listView.addItemDecoration(new DividerItemDecoration(listView.getContext(), DividerItemDecoration.VERTICAL));
         listView.addOnItemTouchListener(new RecyclerView.SimpleOnItemTouchListener() {
+            // Also hide action buttons if listView is touched
             @Override
             public boolean onInterceptTouchEvent(@NonNull RecyclerView recyclerView, @NonNull MotionEvent motionEvent) {
                 if (actionButtonsVisible) {
                     hideActionButtons();
                 }
-                return false;
+                return false;           // false so touch event is passed down to list item
             }
         });
 
@@ -156,7 +157,7 @@ public class ConfigurationActivity extends AppCompatActivity {
         regexLabel.setVisibility(View.VISIBLE);
     }
 
-    public void hideActionButtons() {
+    private void hideActionButtons() {
         actionButtonsVisible = false;
         exactFab.hide();
         exactLabel.setVisibility(View.GONE);

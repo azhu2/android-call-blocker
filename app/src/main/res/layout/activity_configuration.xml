@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorBackground"
     tools:context="activity.ConfigurationActivity">
 
     <TextView
@@ -14,6 +13,7 @@
         android:text="Blocked Numbers"
         android:gravity="center"
         android:textSize="40sp"
+        android:textColor="@color/colorTextPrimary"
         android:textStyle="bold" />
 
     <android.support.v7.widget.RecyclerView
