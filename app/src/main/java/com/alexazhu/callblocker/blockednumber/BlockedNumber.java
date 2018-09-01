@@ -16,11 +16,6 @@ public class BlockedNumber {
     @NonNull
     private final Pattern regex;
 
-    public BlockedNumber(@NonNull final BlockedNumberType type, @NonNull final String regex) {
-        this.type = type;
-        this.regex = Pattern.compile(regex);
-    }
-
     public BlockedNumber(@NonNull final BlockedNumberType type, @NonNull final Pattern regex) {
         this.type = type;
         this.regex = regex;
@@ -36,10 +31,42 @@ public class BlockedNumber {
         return regex;
     }
 
-    @NonNull
     public String getPattern() {
         return regex.pattern();
         // TODO Strip \d*$ from end of regex
+    }
+
+    public String toFormattedString() {
+        String pattern = regex.pattern()
+                .replace("^", "")
+                .replace("\\d+", "")
+                .replace("$", "");
+
+        if (pattern.length() > 6) {
+            return String.format("(%s) %s-%s",
+                    pattern.substring(0, 3),
+                    pattern.substring(3, 6),
+                    pattern.substring(6));
+        } else if (pattern.length() > 3) {
+            return String.format("(%s) %s",
+                    pattern.substring(0, 3),
+                    pattern.substring(3));
+        }
+        return pattern;
+    }
+
+    public static BlockedNumber buildExactMatch(@NonNull final String number) {
+        if (!Pattern.matches("\\d+", number)) {
+            throw new IllegalArgumentException(String.format("Blocked number must be a string of digits only: %s", number));
+        }
+        return new BlockedNumber(BlockedNumberType.EXACT_MATCH, Pattern.compile("^" + number + "$"));
+    }
+
+    public static BlockedNumber buildPrefixMatch(@NonNull final String prefix) {
+        if (!Pattern.matches("\\d+", prefix)) {
+            throw new IllegalArgumentException(String.format("Blocked number prefix must be a string of digits only: %s", prefix));
+        }
+        return new BlockedNumber(BlockedNumberType.REGEX_MATCH, Pattern.compile("^" + prefix + "\\d+$"));
     }
 
     @Override

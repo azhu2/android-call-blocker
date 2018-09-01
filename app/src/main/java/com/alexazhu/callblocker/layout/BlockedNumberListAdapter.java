@@ -88,7 +88,7 @@ public class BlockedNumberListAdapter extends RecyclerView.Adapter<BlockedNumber
     public void onBindViewHolder(@NonNull final BlockedNumberViewHolder viewHolder, final int index) {
         final BlockedNumber number = blockedNumbers.get(index);
         viewHolder.matchTypeView.setText(number.getType().getDisplayText());
-        viewHolder.phoneNumberView.setText(number.getPattern());
+        viewHolder.phoneNumberView.setText(number.toFormattedString());
         viewHolder.deleteButtonView.setOnClickListener((view) -> parentActivity.removeNumber(number));
     }
 

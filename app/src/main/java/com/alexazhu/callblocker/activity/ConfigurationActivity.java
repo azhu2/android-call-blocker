@@ -19,7 +19,6 @@ import com.alexazhu.callblocker.R;
 import com.alexazhu.callblocker.blockednumber.BlockedNumber;
 import com.alexazhu.callblocker.blockednumber.BlockedNumberDao;
 import com.alexazhu.callblocker.blockednumber.BlockedNumberDatabase;
-import com.alexazhu.callblocker.blockednumber.BlockedNumberType;
 import com.alexazhu.callblocker.layout.BlockedNumberListAdapter;
 import com.alexazhu.callblocker.util.AsyncExecutorUtil;
 import com.alexazhu.callblocker.util.PermissionsUtil;
@@ -130,13 +129,13 @@ public class ConfigurationActivity extends AppCompatActivity {
 
         // TODO Add real functionality
         View.OnClickListener openExactDialog = (view) -> {
-            addNumber(new BlockedNumber(BlockedNumberType.EXACT_MATCH, "6505551212"));
+            addNumber(BlockedNumber.buildExactMatch("6505551212"));
         };
         exactFab.setOnClickListener(openExactDialog);
         exactLabel.setOnClickListener(openExactDialog);
 
         View.OnClickListener openRegexDialog = (view) -> {
-            addNumber(new BlockedNumber(BlockedNumberType.REGEX_MATCH, "240426"));
+            addNumber(BlockedNumber.buildPrefixMatch("206265"));
         };
         regexFab.setOnClickListener(openRegexDialog);
         regexLabel.setOnClickListener(openRegexDialog);
