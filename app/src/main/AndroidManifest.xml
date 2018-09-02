@@ -15,7 +15,6 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".activity.ConfigurationActivity"
-            android:label="@string/title_activity_configuration"
             android:theme="@style/AppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
