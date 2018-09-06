@@ -19,6 +19,8 @@ import com.alexazhu.callblocker.R;
 import com.alexazhu.callblocker.blockednumber.BlockedNumber;
 import com.alexazhu.callblocker.blockednumber.BlockedNumberDao;
 import com.alexazhu.callblocker.blockednumber.BlockedNumberDatabase;
+import com.alexazhu.callblocker.blockednumber.BlockedNumberType;
+import com.alexazhu.callblocker.layout.AddNumberDialogFragment;
 import com.alexazhu.callblocker.layout.BlockedNumberListAdapter;
 import com.alexazhu.callblocker.util.AsyncExecutorUtil;
 import com.alexazhu.callblocker.util.PermissionsUtil;
@@ -129,13 +131,25 @@ public class ConfigurationActivity extends AppCompatActivity {
 
         // TODO Add real functionality
         View.OnClickListener openExactDialog = (view) -> {
-            addNumber(BlockedNumber.buildExactMatch("6505551212"));
+            AddNumberDialogFragment dialog = new AddNumberDialogFragment();
+            Bundle arguments = new Bundle();
+            arguments.putInt(AddNumberDialogFragment.LAYOUT_ID_KEY, R.layout.dialog_add_exact_match);
+            arguments.putSerializable(AddNumberDialogFragment.DIALOG_TYPE, BlockedNumberType.EXACT_MATCH);
+            arguments.putString(AddNumberDialogFragment.TITLE, "Add Exact Number");
+            dialog.setArguments(arguments);
+            dialog.show(getSupportFragmentManager(), "AddNumberDialogFragment");
         };
         exactFab.setOnClickListener(openExactDialog);
         exactLabel.setOnClickListener(openExactDialog);
 
         View.OnClickListener openRegexDialog = (view) -> {
-            addNumber(BlockedNumber.buildPrefixMatch("206265"));
+            AddNumberDialogFragment dialog = new AddNumberDialogFragment();
+            Bundle arguments = new Bundle();
+            arguments.putInt(AddNumberDialogFragment.LAYOUT_ID_KEY, R.layout.dialog_add_prefix_match);
+            arguments.putSerializable(AddNumberDialogFragment.DIALOG_TYPE, BlockedNumberType.REGEX_MATCH);
+            arguments.putString(AddNumberDialogFragment.TITLE, "Add Prefix");
+            dialog.setArguments(arguments);
+            dialog.show(getSupportFragmentManager(), "AddNumberDialogFragment");
         };
         regexFab.setOnClickListener(openRegexDialog);
         regexLabel.setOnClickListener(openRegexDialog);

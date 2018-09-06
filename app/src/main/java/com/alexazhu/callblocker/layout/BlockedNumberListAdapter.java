@@ -44,7 +44,7 @@ public class BlockedNumberListAdapter extends RecyclerView.Adapter<BlockedNumber
         this.blockedNumbers = new SortedList<>(BlockedNumber.class, new SortedListAdapterCallback<BlockedNumber>(this) {
             @Override
             public int compare(BlockedNumber item1, BlockedNumber item2) {
-                return item1.getPattern().compareTo(item2.getPattern());
+                return item1.toFormattedString().compareTo(item2.toFormattedString());
             }
 
             @Override

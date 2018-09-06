@@ -21,6 +21,26 @@ public class BlockedNumber {
         this.regex = regex;
     }
 
+    public BlockedNumber(@NonNull final BlockedNumberType type, @NonNull final String number) {
+        this.type = type;
+        switch (type) {
+            case EXACT_MATCH:
+                if (!Pattern.matches("\\d+", number)) {
+                    throw new IllegalArgumentException(String.format("Blocked number must be a string of digits only: %s", number));
+                }
+                this.regex = Pattern.compile("^" + number + "$");
+                break;
+            case REGEX_MATCH:
+                if (!Pattern.matches("\\d+", number)) {
+                    throw new IllegalArgumentException(String.format("Blocked number prefix must be a string of digits only: %s", number));
+                }
+                this.regex = Pattern.compile("^" + number + "\\d+$");
+                break;
+            default:
+                throw new IllegalArgumentException(String.format("Unknown blocked number type: %s", type));
+        }
+    }
+
     @NonNull
     public BlockedNumberType getType() {
         return type;
@@ -29,10 +49,6 @@ public class BlockedNumber {
     @NonNull
     public Pattern getRegex() {
         return regex;
-    }
-
-    public String getPattern() {
-        return regex.pattern();
     }
 
     public String toFormattedString() {
@@ -46,26 +62,12 @@ public class BlockedNumber {
                     pattern.substring(0, 3),
                     pattern.substring(3, 6),
                     pattern.substring(6));
-        } else if (pattern.length() > 3) {
+        } else if (pattern.length() >= 3) {
             return String.format("(%s) %s",
                     pattern.substring(0, 3),
                     pattern.substring(3));
         }
         return pattern;
-    }
-
-    public static BlockedNumber buildExactMatch(@NonNull final String number) {
-        if (!Pattern.matches("\\d+", number)) {
-            throw new IllegalArgumentException(String.format("Blocked number must be a string of digits only: %s", number));
-        }
-        return new BlockedNumber(BlockedNumberType.EXACT_MATCH, Pattern.compile("^" + number + "$"));
-    }
-
-    public static BlockedNumber buildPrefixMatch(@NonNull final String prefix) {
-        if (!Pattern.matches("\\d+", prefix)) {
-            throw new IllegalArgumentException(String.format("Blocked number prefix must be a string of digits only: %s", prefix));
-        }
-        return new BlockedNumber(BlockedNumberType.REGEX_MATCH, Pattern.compile("^" + prefix + "\\d+$"));
     }
 
     @Override

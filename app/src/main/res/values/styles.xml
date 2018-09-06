@@ -7,7 +7,9 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:textColor">@color/colorTextPrimary</item>
+
         <item name="android:button">@style/ActionButton</item>
+        <item name="android:alertDialogTheme">@style/AlertDialog</item>
     </style>
 
     <style name="Button" parent="@android:style/Widget.Material.Light.Button">
@@ -18,6 +20,14 @@
         <item name="android:colorButtonNormal">@color/action_button_color_selector</item>
         <item name="android:colorControlHighlight">@color/colorAccent</item>
         <item name="android:textColor">@color/colorPrimaryLight</item>
+    </style>
+
+    <style name="AlertDialog" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="android:background">@color/colorBackground</item>
+        <item name="android:colorAccent">@color/colorAccent</item>
+
+        <!-- Cancel out textColor from base theme -->
+        <item name="android:textColor">@null</item>
     </style>
 
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />

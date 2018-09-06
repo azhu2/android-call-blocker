@@ -19,6 +19,7 @@ import com.alexazhu.callblocker.blockednumber.BlockedNumberType;
 public class AddNumberDialogFragment extends DialogFragment {
     public static final String LAYOUT_ID_KEY = "layout";
     public static final String DIALOG_TYPE = "dialogType";
+    public static final String TITLE = "title";
 
     @NonNull
     @Override
@@ -26,12 +27,10 @@ public class AddNumberDialogFragment extends DialogFragment {
         ConfigurationActivity configActivity = (ConfigurationActivity) getActivity();
         Bundle args = getArguments();
 
-        final int layoutId = args.getInt(LAYOUT_ID_KEY);
-
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         LayoutInflater inflater = configActivity.getLayoutInflater();
 
-        View dialogView = inflater.inflate(layoutId, null);
+        View dialogView = inflater.inflate(args.getInt(LAYOUT_ID_KEY), null);
         EditText numberView = dialogView.findViewById(R.id.phone_number);
 
         builder.setView(dialogView)
@@ -41,7 +40,8 @@ public class AddNumberDialogFragment extends DialogFragment {
                 BlockedNumber blockedNumber = new BlockedNumber(type, phoneNumber);
                 configActivity.addNumber(blockedNumber);
             })
-            .setNegativeButton("Cancel", (dialog, id) -> {});
+            .setNegativeButton("Cancel", (dialog, id) -> {})
+            .setTitle(args.getString(TITLE));
 
         AlertDialog dialog = builder.create();
 
