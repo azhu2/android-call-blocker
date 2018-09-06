@@ -158,7 +158,6 @@ public class ConfigurationActivity extends AppCompatActivity {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         hideActionButtons();
-
         return true;
     }
 

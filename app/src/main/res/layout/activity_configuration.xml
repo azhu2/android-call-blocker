@@ -41,7 +41,7 @@
         android:layout_height="wrap_content"
         android:src="@android:drawable/ic_input_add"
         app:fabSize="mini"
-        app:backgroundTint="@color/colorPrimaryLight"
+        app:backgroundTint="@color/colorPrimary"
         app:layout_constraintBottom_toTopOf="@id/main_fab"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginBottom="@dimen/fab_margin"
