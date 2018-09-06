@@ -6,5 +6,5 @@
         android:propertyName="x"
         android:valueFrom="0"
         android:valueTo="@dimen/icon_offset"
-        android:duration="500" />
+        android:duration="250" />
 </set>
