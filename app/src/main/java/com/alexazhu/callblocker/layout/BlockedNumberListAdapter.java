@@ -37,6 +37,24 @@ public class BlockedNumberListAdapter extends RecyclerView.Adapter<BlockedNumber
             phoneNumberView = itemView.findViewById(R.id.phone_number);
             deleteButtonView = itemView.findViewById(R.id.delete_button);
         }
+
+        public boolean isExpanded() {
+            return isExpanded;
+        }
+
+        public void expand() {
+            Animator animator = AnimatorInflater.loadAnimator(itemView.getContext(), R.animator.expand_list_item);
+            animator.setTarget(itemView.findViewById(R.id.list_item));
+            animator.start();
+            isExpanded = true;
+        }
+
+        public void collapse() {
+            Animator animator = AnimatorInflater.loadAnimator(itemView.getContext(), R.animator.collapse_list_item);
+            animator.setTarget(itemView.findViewById(R.id.list_item));
+            animator.start();
+            isExpanded = false;
+        }
     }
 
     public BlockedNumberListAdapter(ConfigurationActivity configurationActivity) {
@@ -95,10 +113,13 @@ public class BlockedNumberListAdapter extends RecyclerView.Adapter<BlockedNumber
     @Override
     public void onViewAttachedToWindow(@NonNull final BlockedNumberViewHolder viewHolder) {
         viewHolder.itemView.setOnClickListener((view) -> {
-            Animator animator = AnimatorInflater.loadAnimator(parentActivity, viewHolder.isExpanded ? R.animator.collapse_list_item : R.animator.expand_list_item);
-            animator.setTarget(viewHolder.itemView.findViewById(R.id.list_item));
-            animator.start();
-            viewHolder.isExpanded = !viewHolder.isExpanded;
+            if (viewHolder.isExpanded()) {
+                viewHolder.collapse();
+            } else {
+                viewHolder.expand();
+            }
+
+            parentActivity.collapseNumberItems(viewHolder);
 
             parentActivity.getWindow().getDecorView().performClick();
         });

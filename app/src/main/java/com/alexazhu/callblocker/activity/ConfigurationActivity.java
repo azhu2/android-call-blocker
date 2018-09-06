@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
@@ -36,6 +37,7 @@ public class ConfigurationActivity extends AppCompatActivity {
     private boolean actionButtonsVisible = false;
     private BlockedNumberListAdapter listAdapter;
 
+    private RecyclerView listView;
     private FloatingActionButton exactFab;
     private TextView exactLabel;
     private FloatingActionButton regexFab;
@@ -67,7 +69,7 @@ public class ConfigurationActivity extends AppCompatActivity {
     }
 
     private void fetchAndPopulateBlockedNumbers() {
-        RecyclerView listView = findViewById(R.id.blocked_number_list);
+        listView = findViewById(R.id.blocked_number_list);
         listAdapter = new BlockedNumberListAdapter(this);
         listView.setAdapter(listAdapter);
         listView.setLayoutManager(new LinearLayoutManager(context));
@@ -119,7 +121,7 @@ public class ConfigurationActivity extends AppCompatActivity {
         regexFab = findViewById(R.id.regex_fab);
         regexLabel = findViewById(R.id.regex_label);
 
-        // Toggle action button visibility from main button
+        // Toggle action button visibility from main view
         mainFab.setOnClickListener((view) -> {
             // Ugly if-then because FloatingActionButton.setVisibility() can't be called here
             if (actionButtonsVisible) {
@@ -127,6 +129,7 @@ public class ConfigurationActivity extends AppCompatActivity {
             } else {
                 showActionButtons();
             }
+            collapseNumberItems();
         });
 
         // TODO Add real functionality
@@ -138,6 +141,7 @@ public class ConfigurationActivity extends AppCompatActivity {
             arguments.putString(AddNumberDialogFragment.TITLE, "Add Exact Number");
             dialog.setArguments(arguments);
             dialog.show(getSupportFragmentManager(), "AddNumberDialogFragment");
+            collapseNumberItems();
         };
         exactFab.setOnClickListener(openExactDialog);
         exactLabel.setOnClickListener(openExactDialog);
@@ -150,6 +154,7 @@ public class ConfigurationActivity extends AppCompatActivity {
             arguments.putString(AddNumberDialogFragment.TITLE, "Add Prefix");
             dialog.setArguments(arguments);
             dialog.show(getSupportFragmentManager(), "AddNumberDialogFragment");
+            collapseNumberItems();
         };
         regexFab.setOnClickListener(openRegexDialog);
         regexLabel.setOnClickListener(openRegexDialog);
@@ -158,7 +163,21 @@ public class ConfigurationActivity extends AppCompatActivity {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         hideActionButtons();
+        collapseNumberItems();
         return true;
+    }
+
+    public void collapseNumberItems() {
+        collapseNumberItems(null);
+    }
+
+    public void collapseNumberItems(@Nullable RecyclerView.ViewHolder ignoredViewHolder) {
+        for (int i = 0; i < listView.getChildCount(); i++) {
+            BlockedNumberListAdapter.BlockedNumberViewHolder viewHolder = (BlockedNumberListAdapter.BlockedNumberViewHolder) listView.getChildViewHolder(listView.getChildAt(i));
+            if (viewHolder != ignoredViewHolder && viewHolder.isExpanded()) {
+                viewHolder.collapse();
+            }
+        }
     }
 
     private void showActionButtons() {
