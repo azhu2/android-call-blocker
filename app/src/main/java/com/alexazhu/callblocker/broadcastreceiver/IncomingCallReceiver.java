@@ -3,9 +3,9 @@ package com.alexazhu.callblocker.broadcastreceiver;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.telecom.TelecomManager;
 import android.telephony.TelephonyManager;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.alexazhu.callblocker.blockednumber.BlockedNumber;
 import com.alexazhu.callblocker.blockednumber.BlockedNumberDao;
@@ -39,7 +39,10 @@ public class IncomingCallReceiver extends BroadcastReceiver {
                 }
                 Log.i(LOG_TAG, String.format("Blocked number matched: %s", match.get().toFormattedString()));
 
-                // Block
+                TelecomManager telecomManager = (TelecomManager) context.getSystemService(Context.TELECOM_SERVICE);
+                telecomManager.endCall();
+
+                // TODO Some UI
             });
         }
     }
