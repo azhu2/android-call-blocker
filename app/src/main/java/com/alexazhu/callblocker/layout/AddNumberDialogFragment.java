@@ -10,7 +10,10 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.Spinner;
+import android.widget.SpinnerAdapter;
 import android.widget.Toast;
 
 import com.alexazhu.callblocker.R;
@@ -31,11 +34,15 @@ public class AddNumberDialogFragment extends DialogFragment {
         ConfigurationActivity configActivity = (ConfigurationActivity) getActivity();
         Bundle args = getArguments();
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        AlertDialog.Builder builder = new AlertDialog.Builder(configActivity);
         LayoutInflater inflater = configActivity.getLayoutInflater();
 
         View dialogView = inflater.inflate(args.getInt(LAYOUT_ID_KEY), null);
         EditText numberView = dialogView.findViewById(R.id.phone_number);
+        Spinner countryList = dialogView.findViewById(R.id.country_list);
+        CountryListAdapter adapter = new CountryListAdapter(configActivity);
+        countryList.setAdapter(adapter);
+        countryList.setSelection(adapter.getDefaultPosition());
 
         builder.setView(dialogView)
             .setPositiveButton("Add", (dialog, id) -> {
