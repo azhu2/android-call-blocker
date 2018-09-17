@@ -63,7 +63,7 @@ public class CountryListAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         LayoutInflater inflater = activity.getLayoutInflater();
-        View itemView = inflater.inflate(R.layout.item_country, parent);
+        View itemView = inflater.inflate(R.layout.item_country, null);
 
         TextView regionCode = itemView.findViewById(R.id.country_name);
         regionCode.setText(countryCodes.get(position).countryName);
