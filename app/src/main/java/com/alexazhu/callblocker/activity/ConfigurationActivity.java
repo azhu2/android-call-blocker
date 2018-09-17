@@ -167,7 +167,7 @@ public class ConfigurationActivity extends AppCompatActivity {
         return true;
     }
 
-    public void collapseNumberItems() {
+    private void collapseNumberItems() {
         collapseNumberItems(null);
     }
 

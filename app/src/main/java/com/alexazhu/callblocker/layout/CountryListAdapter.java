@@ -31,7 +31,7 @@ public class CountryListAdapter extends BaseAdapter {
         this.phoneNumberUtil = PhoneNumberUtil.getInstance();
         AsyncExecutorUtil.getInstance().getExecutor().execute(() -> {
             this.countryCodes = PhoneNumberUtil.getInstance().getSupportedCallingCodes().stream()
-                    .map(countryCode -> new Country(countryCode))
+                    .map(Country::new)
                     .sorted()
                     .collect(Collectors.toList());
             int defaultPosition = IntStream.range(0, countryCodes.size())
@@ -63,7 +63,7 @@ public class CountryListAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         LayoutInflater inflater = activity.getLayoutInflater();
-        View itemView = inflater.inflate(R.layout.item_country, null);
+        View itemView = inflater.inflate(R.layout.item_country, parent);
 
         TextView regionCode = itemView.findViewById(R.id.country_name);
         regionCode.setText(countryCodes.get(position).countryName);
