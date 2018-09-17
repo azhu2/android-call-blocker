@@ -1,5 +1,6 @@
 package com.alexazhu.callblocker.layout;
 
+import android.app.Activity;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,7 +9,7 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.alexazhu.callblocker.R;
-import com.alexazhu.callblocker.activity.ConfigurationActivity;
+import com.alexazhu.callblocker.util.AsyncExecutorUtil;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
 
 import java.util.List;
@@ -17,31 +18,36 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class CountryListAdapter extends BaseAdapter {
-    private final ConfigurationActivity context;
+    private final Activity activity;
     private final PhoneNumberUtil phoneNumberUtil;
-    private final List<Country> countryCodes;
     private final Locale deviceLocale;
-    private final int defaultPosition;
+    private List<Country> countryCodes;
 
-    public CountryListAdapter(final ConfigurationActivity context) {
+    public CountryListAdapter(final Activity activity, final AddNumberDialogFragment dialog) {
         super();
 
-        this.context = context;
-        this.deviceLocale = context.getResources().getConfiguration().getLocales().get(0);
+        this.activity = activity;
+        this.deviceLocale = activity.getResources().getConfiguration().getLocales().get(0);
         this.phoneNumberUtil = PhoneNumberUtil.getInstance();
-        this.countryCodes = PhoneNumberUtil.getInstance().getSupportedCallingCodes().stream()
-                .map(countryCode -> new Country(countryCode))
-                .sorted()
-                .collect(Collectors.toList());
-        this.defaultPosition = IntStream.range(0, countryCodes.size())
-                .filter(index -> countryCodes.get(index).regionCode.equals(deviceLocale.getCountry()))
-                .findFirst()
-                .orElse(0);
+        AsyncExecutorUtil.getInstance().getExecutor().execute(() -> {
+            this.countryCodes = PhoneNumberUtil.getInstance().getSupportedCallingCodes().stream()
+                    .map(countryCode -> new Country(countryCode))
+                    .sorted()
+                    .collect(Collectors.toList());
+            int defaultPosition = IntStream.range(0, countryCodes.size())
+                    .filter(index -> countryCodes.get(index).regionCode.equals(deviceLocale.getCountry()))
+                    .findFirst()
+                    .orElse(0);
+            activity.runOnUiThread(() -> {
+                this.notifyDataSetChanged();
+                dialog.selectCountry(defaultPosition);
+            });
+        });
     }
 
     @Override
     public int getCount() {
-        return countryCodes.size();
+        return countryCodes != null ? countryCodes.size() : 0;
     }
 
     @Override
@@ -54,26 +60,20 @@ public class CountryListAdapter extends BaseAdapter {
         return 0;
     }
 
-    public int getDefaultPosition() {
-        return defaultPosition;
-    }
-
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        LayoutInflater inflater = context.getLayoutInflater();
+        LayoutInflater inflater = activity.getLayoutInflater();
         View itemView = inflater.inflate(R.layout.item_country, null);
 
         TextView regionCode = itemView.findViewById(R.id.country_name);
         regionCode.setText(countryCodes.get(position).countryName);
-        TextView countryCode = itemView.findViewById(R.id.country_code);
-        countryCode.setText(countryCodes.get(position).countryCode.toString());
         TextView flag = itemView.findViewById(R.id.country_flag);
         flag.setText(countryCodes.get(position).flagCode);
 
         return itemView;
     }
 
-    private class Country implements Comparable<Country>{
+    public class Country implements Comparable<Country>{
         private final Integer countryCode;
         private final String regionCode;
         private final String countryName;
@@ -86,16 +86,28 @@ public class CountryListAdapter extends BaseAdapter {
             String deviceLanguage = deviceLocale.getLanguage();
             Locale countryLocale = new Locale(deviceLanguage, regionCode);
 
-            this.countryName = countryLocale.getDisplayCountry();
+            String name = countryLocale.getDisplayCountry();
+            if (name.equals("World")) {
+                // Handle odd cases
+                this.countryName = "\u200bOther " + this.countryCode;
+                this.flagCode = "";
+            } else {
+                this.countryName = name;
 
-            int firstLetter = Character.codePointAt(regionCode, 0) - 0x41 + 0x1F1E6;
-            int secondLetter = Character.codePointAt(regionCode, 1) - 0x41 + 0x1F1E6;
-            this.flagCode = new String(Character.toChars(firstLetter)) + new String(Character.toChars(secondLetter));
+                // See https://stackoverflow.com/a/35849652
+                int firstLetter = Character.codePointAt(regionCode, 0) - 0x41 + 0x1F1E6;
+                int secondLetter = Character.codePointAt(regionCode, 1) - 0x41 + 0x1F1E6;
+                this.flagCode = new String(Character.toChars(firstLetter)) + new String(Character.toChars(secondLetter));
+            }
         }
 
         @Override
         public int compareTo(@NonNull Country o) {
             return countryName.compareTo(o.countryName);
+        }
+
+        public Integer getCountryCode() {
+            return countryCode;
         }
     }
 }

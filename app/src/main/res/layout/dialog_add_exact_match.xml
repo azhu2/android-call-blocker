@@ -12,13 +12,27 @@
         android:layout_marginHorizontal="20dp"
         android:layout_marginTop="20dp"/>
 
-    <EditText
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/phone_number"
-        android:hint="Phone Number"
-        android:inputType="phone"
-        android:layout_marginHorizontal="20dp"
-        android:paddingHorizontal="0dp"/>
+        android:orientation="horizontal">
 
+        <TextView
+            android:layout_width="40dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/country_code"
+            android:textAlignment="textEnd"
+            android:background="@color/colorCardBackground"
+            android:layout_marginStart="20dp"
+            android:padding="2dp"/>
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/phone_number"
+            android:hint="Phone Number"
+            android:inputType="phone"
+            android:layout_marginHorizontal="10dp"
+            android:paddingHorizontal="0dp"/>
+    </LinearLayout>
 </LinearLayout>

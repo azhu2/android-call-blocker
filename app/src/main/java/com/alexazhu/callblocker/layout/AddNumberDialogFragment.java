@@ -10,10 +10,11 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.ArrayAdapter;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.EditText;
 import android.widget.Spinner;
-import android.widget.SpinnerAdapter;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.alexazhu.callblocker.R;
@@ -21,12 +22,15 @@ import com.alexazhu.callblocker.activity.ConfigurationActivity;
 import com.alexazhu.callblocker.blockednumber.BlockedNumber;
 import com.alexazhu.callblocker.blockednumber.BlockedNumberType;
 
-public class AddNumberDialogFragment extends DialogFragment {
+public class AddNumberDialogFragment extends DialogFragment implements OnItemSelectedListener {
     private final String LOG_TAG = AddNumberDialogFragment.class.getSimpleName();
 
     public static final String LAYOUT_ID_KEY = "layout";
     public static final String DIALOG_TYPE = "dialogType";
     public static final String TITLE = "title";
+
+    private Spinner countryList;
+    private TextView countryCodeView;
 
     @NonNull
     @Override
@@ -38,11 +42,12 @@ public class AddNumberDialogFragment extends DialogFragment {
         LayoutInflater inflater = configActivity.getLayoutInflater();
 
         View dialogView = inflater.inflate(args.getInt(LAYOUT_ID_KEY), null);
+        countryCodeView = dialogView.findViewById(R.id.country_code);
         EditText numberView = dialogView.findViewById(R.id.phone_number);
-        Spinner countryList = dialogView.findViewById(R.id.country_list);
-        CountryListAdapter adapter = new CountryListAdapter(configActivity);
+        countryList = dialogView.findViewById(R.id.country_list);
+        CountryListAdapter adapter = new CountryListAdapter(configActivity, this);
         countryList.setAdapter(adapter);
-        countryList.setSelection(adapter.getDefaultPosition());
+        countryList.setOnItemSelectedListener(this);
 
         builder.setView(dialogView)
             .setPositiveButton("Add", (dialog, id) -> {
@@ -76,5 +81,20 @@ public class AddNumberDialogFragment extends DialogFragment {
         });
 
         return dialog;
+    }
+
+    public void selectCountry(int position) {
+        countryList.setSelection(position);
+    }
+
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        CountryListAdapter.Country country = (CountryListAdapter.Country) parent.getItemAtPosition(position);
+        countryCodeView.setText("+" + country.getCountryCode());
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+        countryCodeView.setText("");
     }
 }
