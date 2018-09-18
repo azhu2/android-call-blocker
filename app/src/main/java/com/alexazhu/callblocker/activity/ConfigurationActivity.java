@@ -132,7 +132,6 @@ public class ConfigurationActivity extends AppCompatActivity {
             collapseNumberItems();
         });
 
-        // TODO Add real functionality
         View.OnClickListener openExactDialog = (view) -> {
             AddNumberDialogFragment dialog = new AddNumberDialogFragment();
             Bundle arguments = new Bundle();

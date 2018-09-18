@@ -2,39 +2,53 @@ package com.alexazhu.callblocker.blockednumber;
 
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
 import android.arch.persistence.room.TypeConverter;
 import android.support.annotation.NonNull;
+
+import com.google.i18n.phonenumbers.AsYouTypeFormatter;
+import com.google.i18n.phonenumbers.PhoneNumberUtil;
 
 import java.util.regex.Pattern;
 
 @Entity(tableName = "blockednumbers")
 public class BlockedNumber {
-    @ColumnInfo(name = "type")
+    @ColumnInfo(name = "type") @NonNull
     private final BlockedNumberType type;
-    @PrimaryKey
-    @NonNull
+    @PrimaryKey @NonNull
     private final Pattern regex;
+    @ColumnInfo(name = "country_code") @NonNull
+    private final String countryCode;
+    @ColumnInfo(name = "phone_number") @NonNull
+    private final String phoneNumber;
 
-    public BlockedNumber(@NonNull final BlockedNumberType type, @NonNull final Pattern regex) {
+    @Ignore
+    private final PhoneNumberUtil phoneNumberUtil = PhoneNumberUtil.getInstance();
+
+    public BlockedNumber(@NonNull final BlockedNumberType type, @NonNull final Pattern regex, @NonNull final String countryCode, @NonNull final String phoneNumber) {
         this.type = type;
         this.regex = regex;
+        this.countryCode = countryCode;
+        this.phoneNumber = phoneNumber;
     }
 
-    public BlockedNumber(@NonNull final BlockedNumberType type, @NonNull final String number) {
+    public BlockedNumber(@NonNull final BlockedNumberType type, @NonNull final String countryCode, @NonNull final String number) {
         this.type = type;
+        this.countryCode = countryCode.replace("+", "");
+        this.phoneNumber = number;
         switch (type) {
             case EXACT_MATCH:
                 if (!Pattern.matches("\\d+", number)) {
                     throw new IllegalArgumentException(String.format("Blocked number must be a string of digits only: %s", number));
                 }
-                this.regex = Pattern.compile("^" + number + "$");
+                this.regex = Pattern.compile("^" + getInternationalNumber() + "$");
                 break;
             case REGEX_MATCH:
                 if (!Pattern.matches("\\d+", number)) {
                     throw new IllegalArgumentException(String.format("Blocked number prefix must be a string of digits only: %s", number));
                 }
-                this.regex = Pattern.compile("^" + number + "\\d+$");
+                this.regex = Pattern.compile("^" + getInternationalNumber()+ "\\d+$");
                 break;
             default:
                 throw new IllegalArgumentException(String.format("Unknown blocked number type: %s", type));
@@ -51,23 +65,23 @@ public class BlockedNumber {
         return regex;
     }
 
-    public String toFormattedString() {
-        String pattern = regex.pattern()
-                .replace("^", "")
-                .replace("\\d+", "")
-                .replace("$", "");
+    @NonNull
+    public String getCountryCode() { return countryCode; }
 
-        if (pattern.length() > 6) {
-            return String.format("(%s) %s-%s",
-                    pattern.substring(0, 3),
-                    pattern.substring(3, 6),
-                    pattern.substring(6));
-        } else if (pattern.length() >= 3) {
-            return String.format("(%s) %s",
-                    pattern.substring(0, 3),
-                    pattern.substring(3));
+    @NonNull
+    public String getPhoneNumber() { return phoneNumber; }
+
+    private String getInternationalNumber() {
+        return String.format("\\+%s%s", countryCode, phoneNumber);
+    }
+
+    public String toFormattedString() {
+        AsYouTypeFormatter formatter = phoneNumberUtil.getAsYouTypeFormatter(phoneNumberUtil.getRegionCodeForCountryCode(Integer.parseInt(countryCode)));
+        String formattedNumber = "";
+        for (char digit : phoneNumber.toCharArray()) {
+            formattedNumber = formatter.inputDigit(digit);
         }
-        return pattern;
+        return formattedNumber;
     }
 
     @Override

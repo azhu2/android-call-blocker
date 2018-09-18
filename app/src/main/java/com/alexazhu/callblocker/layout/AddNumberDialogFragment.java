@@ -51,10 +51,11 @@ public class AddNumberDialogFragment extends DialogFragment implements OnItemSel
 
         builder.setView(dialogView)
             .setPositiveButton("Add", (dialog, id) -> {
+                String countryCode = countryCodeView.getText().toString();
                 String phoneNumber = numberView.getText().toString();
                 BlockedNumberType type = (BlockedNumberType) args.getSerializable(DIALOG_TYPE);
                 try {
-                    BlockedNumber blockedNumber = new BlockedNumber(type, phoneNumber);
+                    BlockedNumber blockedNumber = new BlockedNumber(type, countryCode, phoneNumber);
                     configActivity.addNumber(blockedNumber);
                     Log.i(LOG_TAG, String.format("Added valid number: %s", blockedNumber));
                 } catch (IllegalArgumentException e) {

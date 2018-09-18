@@ -19,6 +19,11 @@ public class IncomingCallReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
+        if (!TelephonyManager.ACTION_PHONE_STATE_CHANGED.equals(intent.getAction())) {
+            Log.e(LOG_TAG, String.format("IncomingCallReceiver called with incorrect intent action: %s", intent.getAction()));
+            return;
+        }
+
         final String newState = intent.getStringExtra(TelephonyManager.EXTRA_STATE);
         Log.d(LOG_TAG, String.format("Call state changed to %s", newState));
 
