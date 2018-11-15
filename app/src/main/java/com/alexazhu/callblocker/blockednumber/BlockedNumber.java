@@ -86,7 +86,7 @@ public class BlockedNumber {
 
     @Override
     public boolean equals(final Object other) {
-        if (other == null || !(other instanceof BlockedNumber)) {
+        if (!(other instanceof BlockedNumber)) {
             return false;
         }
 

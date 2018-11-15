@@ -1,5 +1,6 @@
 package com.alexazhu.callblocker.broadcastreceiver;
 
+import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -18,6 +19,7 @@ public class IncomingCallReceiver extends BroadcastReceiver {
     private static final String LOG_TAG = IncomingCallReceiver.class.getSimpleName();
 
     @Override
+    @SuppressLint({"MissingPermission"})    // Permissions checked when app opened; just fail here if missing
     public void onReceive(Context context, Intent intent) {
         if (!TelephonyManager.ACTION_PHONE_STATE_CHANGED.equals(intent.getAction())) {
             Log.e(LOG_TAG, String.format("IncomingCallReceiver called with incorrect intent action: %s", intent.getAction()));
